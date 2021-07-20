@@ -1,4 +1,4 @@
-const MyToken = artifacts.require('TokenContract'); // dove "TokenContract" tra parentesi è il nome del contratto nel file solicity
+const MyToken = artifacts.require('TokenNew'); // dove "TokenNew" tra parentesi è il nome del contratto nel file solicity
 
 var chai = require('chai')
   , expect = chai.expect
@@ -12,13 +12,13 @@ contract('TokenContract', properties => {
   const _decimals = "9"; // i decimali della coin
   const _initialSupply = new BN('100000000000000000000000'); // 100.000.000.000.000.000 cento milioni di miliardi di tokens con 9 cifre decimali
   const _BigAmountTransfer = new BN('10000000000000000000000'); // 10.000.000.000.000.000 dieci milioni di miliardi di tokens con 9 cifre decimali
-  const _name = "Token";
-  const _symbol = "TKNCOIN";
-  const _antiDipFee = "11"; // % taxation in BNB to avoid dips
-  const _taxFee = "3"; // % redistribuition to Token holders
-  const _liquidityFee = "3"; // % fee to the liquidity pool
-  const _charityFee = "5"; // % fee auto add to charity wallet
-  const _maxTxAmount = new BN('200000000000000000000'); // Max transferrable in one transaction (0,2% of _tTotal)
+  const _name = "TokenNew";
+  const _symbol = "TKNN";
+  const _antiDipFee = "0"; // % taxation in BNB to avoid dips
+  const _taxFee = "0"; // % redistribuition to Token holders
+  const _liquidityFee = "0"; // % fee to the liquidity pool
+  const _charityFee = "0"; // % fee auto add to charity wallet
+  const _maxTxAmount = new BN('100000000000000000000000'); // Max transferrable in one transaction (0,2% of _tTotal)
 
   let accounts;
   let owner;
