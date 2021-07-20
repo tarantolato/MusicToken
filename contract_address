@@ -9,8 +9,21 @@ Pubblicazione su mainnet_bsc
 Pubblicazione su testnet_bsc
 
 2_deploy_TokenNew.js
-=================
+====================
 
+   Replacing 'TokenNew'
+   --------------------
+   > transaction hash:    0x4c7d6753d6bbaca4f834ff478c1fcef640adc3fd88259a764dff329bc7d78661
+   > Blocks: 4            Seconds: 13
+   > contract address:    0x125d59BcfA3481C955Bc433D2641fF46c15938d1
+   > block number:        10763754
+   > block timestamp:     1626806458
+   > account:             0x0Db4E9C7dFB15bEE706d6212bABB25b0bFf15980
+   > balance:             1.922596829999999004
+   > gas used:            3099033 (0x2f4999)
+   > gas price:           20 gwei
+   > value sent:          0 ETH
+   > total cost:          0.06198066 ETH
 
 ///////////////////////////////////////////////////////////////////////////
 
