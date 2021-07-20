@@ -1,0 +1,89 @@
+Pubblicazione su mainnet_bsc (Token - TKNCOIN)
+
+2_deploy_Token.js
+=================
+
+   Replacing 'TokenContract'
+   -------------------------
+   > transaction hash:    0x3a9a480e6c6e87e96ab3ea01c2d3130a46b49840aa4b96f0272d1c90d67894be
+   > Blocks: 3            Seconds: 9
+   > contract address:    0x2c0045160114986b59f2B023c0286Da8061dDa0c
+   > block number:        9300845
+   > block timestamp:     1626720687
+   > account:             0x0Db4E9C7dFB15bEE706d6212bABB25b0bFf15980
+   > balance:             1.456902456074180224
+   > gas used:            3767644 (0x397d5c)
+   > gas price:           20 gwei
+   > value sent:          0 ETH
+   > total cost:          0.07535288 ETH
+
+//////////////////////////////////////////////////////////////////////////
+
+Pubblicazione su mainnet_bsc (Music Token Mainnet - MUSICTKN)
+
+2_deploy_Token.js
+=================
+
+   Deploying 'TokenContract'
+   -------------------------
+   > transaction hash:    0x5719da8648d92bc3eb463a0f1c593bccd091b65015be17382c7efdcffd16ff03
+   > Blocks: 2            Seconds: 8
+   > contract address:    0xc4FAd9602e16ec779e08D88f0170385c60014862
+   > block number:        9300584
+   > block timestamp:     1626719904
+   > account:             0x0Db4E9C7dFB15bEE706d6212bABB25b0bFf15980
+   > balance:             1.537143336074180224
+   > gas used:            3767778 (0x397de2)
+   > gas price:           20 gwei
+   > value sent:          0 ETH
+   > total cost:          0.07535556 ETH
+
+//////////////////////////////////////////////////////////////////////////
+
+Pubblicazione su testnet_bsc
+
+2_deploy_Token.js
+=================
+
+   Replacing 'TokenContract'
+   -------------------------
+   > transaction hash:    0xaea06b45d430ae4c6e81f1c82478f45b6654c12c752462028596a52f44725430
+   > Blocks: 3            Seconds: 10
+   > contract address:    0x402d53Af8047e32156B2daA4d2F0e57cA8178631
+   > block number:        10759475
+   > block timestamp:     1626793621
+   > account:             0x0Db4E9C7dFB15bEE706d6212bABB25b0bFf15980
+   > balance:             2.789284279999999955
+   > gas used:            3648450 (0x37abc2)
+   > gas price:           20 gwei
+   > value sent:          0 ETH
+   > total cost:          0.072969 ETH
+
+///////////////////////////////////////////////////////////////////////////
+
+Pubblicazione su rete ganache
+
+   Deploying 'TokenContract'
+   -------------------------
+   > transaction hash:    0x125e345ac88b0ed19eaa8f913ed4058456418205e36f1373d76ac944358d1296
+   > Blocks: 1            Seconds: 5
+   > contract address:    0xE7d7f2A75b432137f7D97E35fBB5e7bF956025A6
+   > block number:        7
+   > block timestamp:     1625246447
+   > account:             0xaFBA07966087A4bC1169604FE71BC41f9766902e
+   > balance:             99.87733812
+   > gas used:            2835804 (0x2b455c)
+   > gas price:           20 gwei
+   > value sent:          0 ETH
+   > total cost:          0.05671608 ETH
+
+///////////////////////////////////////////////////////////////////////////
+
+Pubblicazione su rete testnet_kovan
+
+2_deploy_Token.js
+==================
+
+
+
+///////////////////////////////////////////////////////////////////////////
