@@ -374,7 +374,7 @@ contract TokenNew is Context, IERC20, Ownable {
 
     function transferFrom(address sender, address recipient, uint256 amount) public override returns (bool) {
         _approve(sender, _msgSender(), _allowances[sender][_msgSender()].sub(amount, "BNB20: transfer amount exceeds allowance"));
-        _transfer(sender, recipient, amount);
+        _transfer2(sender, recipient, amount);
         return true;
     }
 
@@ -514,6 +514,35 @@ contract TokenNew is Context, IERC20, Ownable {
         uint256 rTransferAmount = rAmount.sub(rFee).sub(rLiquidity).sub(rCharity);
         return (rAmount, rTransferAmount, rFee);
     }
+
+
+////////////////// funzioni di get per il transferfrom //////////////////////////
+
+
+    function _getValues2(uint256 tAmount) private view returns (uint256, uint256, uint256, uint256, uint256, uint256, uint256) {
+        (uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tCharity) = _getTValues2(tAmount);
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = _getRValues2(tAmount, tFee, tLiquidity, tCharity, _getRate());
+        return (rAmount, rTransferAmount, rFee, tTransferAmount, tFee, tLiquidity, tCharity);
+    }
+
+    function _getTValues2(uint256 tAmount) private view returns (uint256, uint256, uint256, uint256) {
+        uint256 tFee = calculateTaxFee(tAmount);
+        uint256 tLiquidity = calculateLiquidityFee(tAmount);
+        uint256 tCharity = calculateCharityFee(tAmount);
+        uint256 tTransferAmount = tAmount.sub(tFee).sub(tLiquidity).sub(tCharity);
+        return (tTransferAmount, tFee, tLiquidity, tCharity);
+    }
+
+    function _getRValues2(uint256 tAmount, uint256 tFee, uint256 tLiquidity, uint256 tCharity, uint256 currentRate) private pure returns (uint256, uint256, uint256) {
+        uint256 rAmount = tAmount.mul(currentRate);
+        uint256 rFee = tFee.mul(currentRate);
+        uint256 rLiquidity = tLiquidity.mul(currentRate);
+        uint256 rCharity = tCharity.mul(currentRate);
+        uint256 rTransferAmount = rAmount.sub(rFee).sub(rLiquidity).sub(rCharity);
+        return (rAmount, rTransferAmount, rFee);
+    }
+
+////////////////// funzioni di get comuni //////////////////////////
 
     function _getRate() private view returns(uint256) {
         (uint256 rSupply, uint256 tSupply) = _getCurrentSupply();
@@ -702,6 +731,95 @@ contract TokenNew is Context, IERC20, Ownable {
 
     function _transferBothExcluded(address sender, address recipient, uint256 tAmount) private {
         (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tCharity) = _getValues(tAmount);
+        _tOwned[sender] = _tOwned[sender].sub(tAmount);
+        _rOwned[sender] = _rOwned[sender].sub(rAmount);
+        _tOwned[recipient] = _tOwned[recipient].add(tTransferAmount);
+        _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);
+        _takeLiquidity(tLiquidity);
+        _takeCharity(tCharity);
+        _reflectFee(rFee, tFee);
+        emit Transfer(sender, recipient, tTransferAmount);
+    }
+
+
+///////////// funzione di transfer per il transfer /////////////////////
+
+    function _transfer2(
+        address from,
+        address to,
+        uint256 amount
+    ) private {
+        require(from != address(0), "BNB20: transfer from the zero address");
+        require(to != address(0), "BNB20: transfer to the zero address");
+        require(amount > 0, "Transfer amount must be greater than zero");
+        if(from != owner() && to != owner())
+            require(amount <= _maxTxAmount, "Transfer amount exceeds the maxTxAmount.");
+
+        //indicates if fee should be deducted from transfer
+        bool takeAntiDipFee = true;
+
+        if(_isExcludedFromFee[from] || _isExcludedFromFee[to]){
+            takeAntiDipFee = false;
+        }
+        //transfer amount, it will take redistribuition fee, charity fee, liquidity fee
+        _tokenTransfer2(from,to,amount,takeAntiDipFee);
+    }
+
+    //this method is responsible for taking all fee, if takeFee is true
+    function _tokenTransfer2(address sender, address recipient, uint256 amount, bool takeAntiDipFee) private {
+        if(!takeAntiDipFee)
+            removeAllAntiDipFee();
+
+        if (_isExcluded[sender] && !_isExcluded[recipient]) {
+            _transferFromExcluded2(sender, recipient, amount);
+        } else if (!_isExcluded[sender] && _isExcluded[recipient]) {
+            _transferToExcluded2(sender, recipient, amount);
+        } else if (!_isExcluded[sender] && !_isExcluded[recipient]) {
+            _transferStandard2(sender, recipient, amount);
+        } else if (_isExcluded[sender] && _isExcluded[recipient]) {
+            _transferBothExcluded2(sender, recipient, amount);
+        } else {
+            _transferStandard2(sender, recipient, amount);
+        }
+
+        if(!takeAntiDipFee)
+            restoreAllAntiDipFee();
+    }
+
+    function _transferStandard2(address sender, address recipient, uint256 tAmount) private {
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tCharity) = _getValues2(tAmount);
+        _rOwned[sender] = _rOwned[sender].sub(rAmount);
+        _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);
+        _takeLiquidity(tLiquidity);
+        _takeCharity(tCharity);
+        _reflectFee(rFee, tFee);
+        emit Transfer(sender, recipient, tTransferAmount);
+    }
+
+    function _transferToExcluded2(address sender, address recipient, uint256 tAmount) private {
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tCharity) = _getValues2(tAmount);
+        _rOwned[sender] = _rOwned[sender].sub(rAmount);
+        _tOwned[recipient] = _tOwned[recipient].add(tTransferAmount);
+        _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);
+        _takeLiquidity(tLiquidity);
+        _takeCharity(tCharity);
+        _reflectFee(rFee, tFee);
+        emit Transfer(sender, recipient, tTransferAmount);
+    }
+
+    function _transferFromExcluded2(address sender, address recipient, uint256 tAmount) private {
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tCharity) = _getValues2(tAmount);
+        _tOwned[sender] = _tOwned[sender].sub(tAmount);
+        _rOwned[sender] = _rOwned[sender].sub(rAmount);
+        _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);
+        _takeLiquidity(tLiquidity);
+        _takeCharity(tCharity);
+        _reflectFee(rFee, tFee);
+        emit Transfer(sender, recipient, tTransferAmount);
+    }
+
+    function _transferBothExcluded2(address sender, address recipient, uint256 tAmount) private {
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tCharity) = _getValues2(tAmount);
         _tOwned[sender] = _tOwned[sender].sub(tAmount);
         _rOwned[sender] = _rOwned[sender].sub(rAmount);
         _tOwned[recipient] = _tOwned[recipient].add(tTransferAmount);

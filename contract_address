@@ -3,24 +3,25 @@ Pubblicazione su mainnet_bsc
 2_deploy_TokenNew.js
 =================
 
-
 //////////////////////////////////////////////////////////////////////////
 
-Pubblicazione su testnet_bsc
+Pubblicazione su testnet_bsc (funzioni transfer e transferfrom separate ma clonate)
 
 2_deploy_TokenNew.js
 ====================
 
    Replacing 'TokenNew'
    --------------------
-   > transaction hash:    0xd4f59354062515a8f130eaba94d2ed34c58f0f8b7c612927c1c2416f9f2d60ba
+   > transaction hash:    0x9e62d691eb298d3de3cccc12f59d57e17b2da87ea3c057dac33513ecea0ef6cf
    > Blocks: 3            Seconds: 9
-   > contract address:    0xc9AdA0d15d4ce93d9c2402d8A56e9c2ac6415ffC
-   > block number:        10765151
-   > block timestamp:     1626810649
+   > contract address:    0xc65096930f1a58bA2B417630F7Ba1C9EC93773C0
+   > block number:        10766744
+   > block timestamp:     1626815428
    > account:             0x0Db4E9C7dFB15bEE706d6212bABB25b0bFf15980
-   > balance:             1.503444799999998587
-   > gas used:            3099033 (0x2f4999)
+   > balance:             0.94009967999999817
+   > gas used:            3244787 (0x3182f3)
    > gas price:           20 gwei
    > value sent:          0 ETH
-   > total cost:          0.06198066 ETH
+   > total cost:          0.06489574 ETH
+
+//////////////////////////////////////////////////////////////////////////
