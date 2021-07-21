@@ -207,10 +207,8 @@ contract TokenNew is Context, IERC20, Ownable {
     uint8 private _decimals = 9;
 
     bool public _autoMode = false; // allo start disattiva il calcolo della Anti Dip fee tramite Oracolo
-    uint256 public _antiDipFee = 0; // variable% taxation in BNB to avoid dips
-    uint256 private _previousantiDipFee = _antiDipFee;
-    uint256 private _antiDipFeeFromOracle; // percentuale di Anti Dip fee proveniente dall'algoritmo di Oracle
-
+    uint256 public _antiDipFeeFromOracle = 0; // variable% taxation in BNB to avoid dips
+    uint256 private _previousAntiDipFeeFromOracle = _antiDipFeeFromOracle;
 
     uint256 public _taxFee = 0; // 3% redistribuition
     uint256 private _previousTaxFee = _taxFee;
@@ -281,10 +279,6 @@ contract TokenNew is Context, IERC20, Ownable {
 
     function decimals() public view returns (uint8) {
         return _decimals;
-    }
-
-    function getAntiDipFee() public view returns (uint256) {
-        return _antiDipFee;
     }
 
     function getAntiDipAddress() public view returns (address) {
@@ -439,10 +433,6 @@ contract TokenNew is Context, IERC20, Ownable {
         _projectFee = projectFee;
     }
 
-    function setAntiDipFeePercent(uint256 antiDipFee) external onlyOwner {
-        _antiDipFee = antiDipFee;
-    }
-
     function setAntiDipAutoFromOracle(bool autoMode) public onlyOwner {
         _autoMode = autoMode;
     }
@@ -540,20 +530,8 @@ contract TokenNew is Context, IERC20, Ownable {
     }
 
     function calculateAntiDipFee(uint256 _amount) private view returns (uint256) {
-        return _amount.mul(_antiDipFee).div(10**2);
+        return _amount.mul(_antiDipFeeFromOracle).div(10**2);
     }
-
-//////////////  questa funzione deve avere il feedback dall'oracolo di Uniswap per definire la fee in funzione dell'allontanamento dal prezzo massimo ////////////////////////
-   /* function calculateAntiDipFee(uint256 _amount) public onlyOwner view returns (uint256) {
-       uint256 antiDipResultFee;
-       if (!_autoMode) {
-           antiDipResultFee = _amount.mul(_antiDipFee).div(10**2);
-       }
-       else {
-           antiDipResultFee = _amount.mul(_antiDipFeeFromOracle).div(10**2);
-       }
-       return antiDipResultFee;
-   } */
 
     function removeAllFee() private {
         if(_taxFee == 0 && _projectFee == 0) return;
@@ -566,9 +544,9 @@ contract TokenNew is Context, IERC20, Ownable {
     }
 
     function removeAllAntiDipFee() private {
-        if(_antiDipFee == 0) return;
-        _previousantiDipFee = _antiDipFee;
-        _antiDipFee = 0;
+        if(_antiDipFeeFromOracle == 0) return;
+        _previousAntiDipFeeFromOracle = _antiDipFeeFromOracle;
+        _antiDipFeeFromOracle = 0;
     }
 
     function restoreAllFee() private {
@@ -577,7 +555,7 @@ contract TokenNew is Context, IERC20, Ownable {
     }
 
     function restoreAllAntiDipFee() private {
-        _antiDipFee = _previousantiDipFee;
+        _antiDipFeeFromOracle = _previousAntiDipFeeFromOracle;
     }
 
     function isExcludedFromFee(address account) public view returns(bool) {

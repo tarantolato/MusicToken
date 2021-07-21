@@ -14,10 +14,10 @@ contract('TokenNew', properties => {
   const _BigAmountTransfer = new BN('10000000000000000000000'); // 10.000.000.000.000.000 dieci milioni di miliardi di tokens con 9 cifre decimali
   const _name = "TokenNew";
   const _symbol = "TKNN";
-  const _antiDipFee = "0"; // % taxation in BNB to avoid dips
+  const _antiDipAutoFromOracle = "0"; // % taxation in BNB to avoid dips
   const _taxFee = "0"; // % redistribuition to Token holders
   const _projectFee = "0"; // % fee to the project pool
-  const _maxTxAmount = new BN('100000000000000000000000'); // Max transferrable in one transaction (0,2% of _tTotal)
+  const _maxTxAmount = new BN('10000000000000000000000'); // Max transferrable in one transaction (0,2% of _tTotal)
 
   let accounts;
   let owner;
@@ -62,10 +62,10 @@ contract('TokenNew', properties => {
   });
 
   describe('token tax fees', function () {
-    it('has the correct antidip fee', async function() {
-      const antidip = await myToken.getAntiDipFee();
-      antidip.should.be.a.bignumber.equals(_antiDipFee); // qui usa il metodo should di Chai per i bignumber
-      console.log("antidip fee: " + antidip);
+    it('has the correct antiDipAutoFromOracle fee', async function() {
+      const antiDipAutoFromOracle = await myToken.get_antiDipFeeFromOracle();
+      antiDipAutoFromOracle.should.be.a.bignumber.equals(_antiDipAutoFromOracle); // qui usa il metodo should di Chai per i bignumber
+      console.log("antidip fee from Oracle: " + antiDipAutoFromOracle);
     });
 
     it('has the correct redistribution fee', async function() {
@@ -215,59 +215,6 @@ contract('TokenNew', properties => {
       newowner.should.equals(accounts[1]);
     });
   });
-
-  // describe('token TransferFrom functions', function () {
-
-    // it('transferfrom 10.000.000.000.000,000000000 TKNT bit correctly from account[1] to account[2] sending the Anti Dip fee to AntidipAddress', async function() {
-    //   await myToken.transfer(accounts[1], _BigAmountTransfer); // trasferisce dall'owner ad un account 2, in questa funzione l'owner è sottinteso, ma è lui che invia coin
-    //   await myToken.transfer(accounts[2], _BigAmountTransfer); // trasferisce dall'owner ad un account 3, in questa funzione l'owner è sottinteso, ma è lui che invia coin
-    //
-    //   const balanceAccount0_before = await myToken.balanceOf(accounts[0]);// sender2
-    //   const balanceAccount1_before = await myToken.balanceOf(accounts[1]); // sender
-    //   const balanceAccount2_before = await myToken.balanceOf(accounts[2]); // receiver
-    //   const balanceAccount3_before = await myToken.balanceOf(accounts[3]); // receiver2
-    //   const balanceAccountProject_before = await myToken.balanceOf(accounts[6]); // Project wallet
-    //   const balanceAccountAntiDip_before = await myToken.balanceOf(accounts[7]); // AntiDip wallet
-    //
-    //   console.log("balanceAccount0_before: " + balanceAccount0_before);
-    //   console.log("balanceAccount1_before: " + balanceAccount1_before);
-    //   console.log("balanceAccount2_before: " + balanceAccount2_before);
-    //   console.log("balanceAccount3_before: " + balanceAccount3_before);
-    //   console.log("balanceAccountProject_before: " + balanceAccountProject_before);
-    //   console.log("balanceAccountAntiDip_before: " + balanceAccountAntiDip_before);
-    //
-    //   // ora includo l'owner nelle AntiDipfee
-    //   await myToken.includeInAntiDipFee(accounts[0]);
-    //   await myToken.setMaxTxPerThousand(1000); // set maxTransfer to 1000/1000
-    //   await myToken.approve(accounts[1], _BigAmountTransfer) // qui account[1] riceve l'approvazione di spendere i token di account[0] da account[0] (owner)
-    //   await myToken.transferFrom(accounts[1], accounts[2], _BigAmountTransfer);
-    //   await myToken.approve(accounts[0], _BigAmountTransfer) // qui account[0] riceve l'approvazione di spendere i suoi token
-    //   await myToken.transferFrom(accounts[0], accounts[3], _BigAmountTransfer);
-    //   await myToken.setMaxTxPerThousand(3); // set maxTransfer to 5/1000 = 0,5%
-    //   await myToken.setAntiDipAutoFromOracle(false);
-    //
-    //   const balanceAccount0_after = await myToken.balanceOf(accounts[0]);// sender2
-    //   const balanceAccount1_after = await myToken.balanceOf(accounts[1]); // sender
-    //   const balanceAccount2_after = await myToken.balanceOf(accounts[2]); // receiver
-    //   const balanceAccount3_after = await myToken.balanceOf(accounts[3]); // receiver2
-    //   const balanceAccountProject_after = await myToken.balanceOf(accounts[6]); // Project wallet
-    //   const balanceAccountAntiDip_after = await myToken.balanceOf(accounts[7]); // AntiDip wallet
-    //
-    //   console.log("balanceAccount0_after: " + balanceAccount0_after);
-    //   console.log("balanceAccount1_after: " + balanceAccount1_after);
-    //   console.log("balanceAccount2_after: " + balanceAccount2_after);
-    //   console.log("balanceAccount3_after: " + balanceAccount3_after);
-    //   console.log("balanceAccountProject_after: " + balanceAccountProject_after);
-    //   console.log("balanceAccountAntiDip_after: " + balanceAccountAntiDip_after);
-    //
-    //   // balanceAccount0_after.should.be.a.bignumber.equals(new BN('70000000000000000000000'));
-    //   // balanceAccount1_after.should.be.a.bignumber.equals(new BN('0'));
-    //   // balanceAccount2_after.should.be.a.bignumber.equals(new BN('18900000000000000000000'));
-    //   // balanceAccount3_after.should.be.a.bignumber.equals(new BN('8900000000000000000000'));
-    //   // balanceAccountProject_after.should.be.a.bignumber.equals(new BN('0'));
-    //   // balanceAccountAntiDip_after.should.be.a.bignumber.equals(new BN('2200000000000000000000'));
-    // });
-  // });
 
   describe('token Presale and PancakeSwap functions', function () {
 
