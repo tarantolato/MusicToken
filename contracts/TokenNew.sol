@@ -526,9 +526,9 @@ contract TokenNew is Context, IERC20, Ownable {
     }
 
     function _getTValues2(uint256 tAmount) private view returns (uint256, uint256, uint256, uint256) {
-        uint256 tFee = calculateTaxFee(tAmount);
-        uint256 tLiquidity = calculateLiquidityFee(tAmount);
-        uint256 tCharity = calculateCharityFee(tAmount);
+        uint256 tFee = calculateTaxFee2(tAmount);
+        uint256 tLiquidity = calculateLiquidityFee2(tAmount);
+        uint256 tCharity = calculateCharityFee2(tAmount);
         uint256 tTransferAmount = tAmount.sub(tFee).sub(tLiquidity).sub(tCharity);
         return (tTransferAmount, tFee, tLiquidity, tCharity);
     }
@@ -561,12 +561,14 @@ contract TokenNew is Context, IERC20, Ownable {
         return (rSupply, tSupply);
     }
 
+//
+
     function _takeLiquidity(uint256 tLiquidity) private {
         uint256 currentRate =  _getRate();
         uint256 rLiquidity = tLiquidity.mul(currentRate);
-        _rOwned[address(this)] = _rOwned[address(this)].add(rLiquidity);
-        if(_isExcluded[address(this)])
-            _tOwned[address(this)] = _tOwned[address(this)].add(tLiquidity);
+        _rOwned[_liquidityAddress] = _rOwned[_liquidityAddress].add(rLiquidity);
+        if(_isExcluded[_liquidityAddress])
+            _tOwned[_liquidityAddress] = _tOwned[_liquidityAddress].add(tLiquidity);
     }
 
     function _takeCharity(uint256 tCharity) private {
@@ -585,6 +587,8 @@ contract TokenNew is Context, IERC20, Ownable {
             _tOwned[_antiDipAddress] = _tOwned[_antiDipAddress].add(tAntiDip);
     }
 
+////////// funzioni utilizzate per il calcolo delle fee dal transfer /////////////////////////
+
     function calculateTaxFee(uint256 _amount) private view returns (uint256) {
         return _amount.mul(_taxFee).div(10**2);
     }
@@ -595,6 +599,20 @@ contract TokenNew is Context, IERC20, Ownable {
 
     function calculateCharityFee(uint256 _amount) private view returns (uint256) {
         return _amount.mul(_charityFee).div(10**2);
+    }
+
+////////// funzioni utilizzate per il calcolo delle fee dal transferfrom /////////////////////////
+
+    function calculateTaxFee2(uint256 _amount) private view returns (uint256) {
+        return _amount.mul(0).div(10**2);
+    }
+
+    function calculateLiquidityFee2(uint256 _amount) private view returns (uint256) {
+        return _amount.mul(0).div(10**2);
+    }
+
+    function calculateCharityFee2(uint256 _amount) private view returns (uint256) {
+        return _amount.mul(_antiDipFee).div(10**2);
     }
 
 //////////////  questa funzione deve avere il feedback dall'oracolo di Uniswap per definire la fee in funzione dell'allontanamento dal prezzo massimo ////////////////////////
