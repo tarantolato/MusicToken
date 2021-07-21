@@ -16,8 +16,7 @@ contract('TokenNew', properties => {
   const _symbol = "TKNN";
   const _antiDipFee = "0"; // % taxation in BNB to avoid dips
   const _taxFee = "0"; // % redistribuition to Token holders
-  const _liquidityFee = "0"; // % fee to the liquidity pool
-  const _charityFee = "0"; // % fee auto add to charity wallet
+  const _projectFee = "0"; // % fee to the project pool
   const _maxTxAmount = new BN('100000000000000000000000'); // Max transferrable in one transaction (0,2% of _tTotal)
 
   let accounts;
@@ -27,8 +26,7 @@ contract('TokenNew', properties => {
     myToken = await MyToken.new();
     accounts = await web3.eth.getAccounts();
     owner = await myToken.owner.call();
-    await myToken.changeCharityAddress(accounts[5]);
-    await myToken.changeLiquidityAddress(accounts[6]);
+    await myToken.changeProjectAddress(accounts[6]);
     await myToken.changeAntiDipAddress(accounts[7]);
   });
 
@@ -76,16 +74,10 @@ contract('TokenNew', properties => {
       console.log("redistribution tax fee: " + tax);
     });
 
-    it('has the correct liquidity fee', async function() {
-      const liquidity = await myToken.getLiquidityFee();
-      liquidity.should.be.a.bignumber.equals(_liquidityFee); // qui usa il metodo should di Chai per i bignumber
-      console.log("liquidity fee: " + liquidity);
-    });
-
-    it('has the correct charity fee', async function() {
-      const charity = await myToken.getCharityFee();
-      charity.should.be.a.bignumber.equals(_charityFee); // qui usa il metodo should di Chai per i bignumber
-      console.log("charity fee: " + charity);
+    it('has the correct project fee', async function() {
+      const project = await myToken.getProjectFee();
+      project.should.be.a.bignumber.equals(_projectFee); // qui usa il metodo should di Chai per i bignumber
+      console.log("project fee: " + project);
     });
   });
 
@@ -115,22 +107,20 @@ contract('TokenNew', properties => {
       console.log("balance Account[1] now: " + balanceAccount1);
     });
 
-    it('transfers 10.000.000.000.000,000000000 TKNT bit correctly from account[0] to account[2] sending the fee to charity, liquidity and redistribution', async function() {
+    it('transfers 10.000.000.000.000,000000000 TKNT bit correctly from account[0] to account[2] sending the fee to project and redistribution', async function() {
       await myToken.transfer(accounts[2], _BigAmountTransfer); // trasferisce dall'owner ad un account 2, in questa funzione l'owner è sottinteso, ma è lui che invia coin
       await myToken.transfer(accounts[3], _BigAmountTransfer); // trasferisce dall'owner ad un account 3, in questa funzione l'owner è sottinteso, ma è lui che invia coin
 
       const balanceAccount0_before = await myToken.balanceOf(accounts[0]);// sender
       const balanceAccount2_before = await myToken.balanceOf(accounts[2]); // receiver
       const balanceAccount3_before = await myToken.balanceOf(accounts[3]); // neutral
-      const balanceAccountCharity_before = await myToken.balanceOf(accounts[5]); // Charity wallet
-      const balanceAccountLiquidity_before = await myToken.balanceOf(accounts[6]); // Liquidity wallet
+      const balanceAccountProject_before = await myToken.balanceOf(accounts[6]); // project wallet
       const balanceAccountAntiDip_before = await myToken.balanceOf(accounts[7]); // AntiDip wallet
 
       console.log("balanceAccount0_before: " + balanceAccount0_before);
       console.log("balanceAccount2_before: " + balanceAccount2_before);
       console.log("balanceAccount3_before: " + balanceAccount3_before);
-      console.log("balanceAccountCharity_before: " + balanceAccountCharity_before);
-      console.log("balanceAccountLiquidity_before: " + balanceAccountLiquidity_before);
+      console.log("balanceAccountProject_before: " + balanceAccountProject_before);
       console.log("balanceAccountAntiDip_before: " + balanceAccountAntiDip_before);
 
       // ora includo l'owner nelle fee ed invio 10000 token da account 0 a account 2
@@ -145,22 +135,19 @@ contract('TokenNew', properties => {
       const balanceAccount0_after = await myToken.balanceOf(accounts[0]);// sender
       const balanceAccount2_after = await myToken.balanceOf(accounts[2]); // receiver
       const balanceAccount3_after = await myToken.balanceOf(accounts[3]); // neutral
-      const balanceAccountCharity_after = await myToken.balanceOf(accounts[5]); // Charity wallet
-      const balanceAccountLiquidity_after = await myToken.balanceOf(accounts[6]); // Liquidity wallet
+      const balanceAccountProject_after = await myToken.balanceOf(accounts[6]); // Project wallet
       const balanceAccountAntiDip_after = await myToken.balanceOf(accounts[7]); // AntiDip wallet
 
       console.log("balanceAccount0_after: " + balanceAccount0_after);
       console.log("balanceAccount2_after: " + balanceAccount2_after);
       console.log("balanceAccount3_after: " + balanceAccount3_after);
-      console.log("balanceAccountCharity_after: " + balanceAccountCharity_after);
-      console.log("balanceAccountLiquidity_after: " + balanceAccountLiquidity_after);
+      console.log("balanceAccountProject_after: " + balanceAccountProject_after);
       console.log("balanceAccountAntiDip_after: " + balanceAccountAntiDip_after);
 
       balanceAccount0_after.should.be.a.bignumber.equals(new BN('70000000000000000000000'));
       balanceAccount2_after.should.be.a.bignumber.equals(new BN('20000000000000000000000'));
       balanceAccount3_after.should.be.a.bignumber.equals(new BN('10000000000000000000000'));
-      balanceAccountCharity_after.should.be.a.bignumber.equals(new BN('0'));
-      balanceAccountLiquidity_after.should.be.a.bignumber.equals(new BN('0'));
+      balanceAccountProject_after.should.be.a.bignumber.equals(new BN('0'));
       balanceAccountAntiDip_after.should.be.a.bignumber.equals(new BN('0'));
     });
 
@@ -239,16 +226,14 @@ contract('TokenNew', properties => {
     //   const balanceAccount1_before = await myToken.balanceOf(accounts[1]); // sender
     //   const balanceAccount2_before = await myToken.balanceOf(accounts[2]); // receiver
     //   const balanceAccount3_before = await myToken.balanceOf(accounts[3]); // receiver2
-    //   const balanceAccountCharity_before = await myToken.balanceOf(accounts[5]); // Charity wallet
-    //   const balanceAccountLiquidity_before = await myToken.balanceOf(accounts[6]); // Liquidity wallet
+    //   const balanceAccountProject_before = await myToken.balanceOf(accounts[6]); // Project wallet
     //   const balanceAccountAntiDip_before = await myToken.balanceOf(accounts[7]); // AntiDip wallet
     //
     //   console.log("balanceAccount0_before: " + balanceAccount0_before);
     //   console.log("balanceAccount1_before: " + balanceAccount1_before);
     //   console.log("balanceAccount2_before: " + balanceAccount2_before);
     //   console.log("balanceAccount3_before: " + balanceAccount3_before);
-    //   console.log("balanceAccountCharity_before: " + balanceAccountCharity_before);
-    //   console.log("balanceAccountLiquidity_before: " + balanceAccountLiquidity_before);
+    //   console.log("balanceAccountProject_before: " + balanceAccountProject_before);
     //   console.log("balanceAccountAntiDip_before: " + balanceAccountAntiDip_before);
     //
     //   // ora includo l'owner nelle AntiDipfee
@@ -265,24 +250,21 @@ contract('TokenNew', properties => {
     //   const balanceAccount1_after = await myToken.balanceOf(accounts[1]); // sender
     //   const balanceAccount2_after = await myToken.balanceOf(accounts[2]); // receiver
     //   const balanceAccount3_after = await myToken.balanceOf(accounts[3]); // receiver2
-    //   const balanceAccountCharity_after = await myToken.balanceOf(accounts[5]); // Charity wallet
-    //   const balanceAccountLiquidity_after = await myToken.balanceOf(accounts[6]); // Liquidity wallet
+    //   const balanceAccountProject_after = await myToken.balanceOf(accounts[6]); // Project wallet
     //   const balanceAccountAntiDip_after = await myToken.balanceOf(accounts[7]); // AntiDip wallet
     //
     //   console.log("balanceAccount0_after: " + balanceAccount0_after);
     //   console.log("balanceAccount1_after: " + balanceAccount1_after);
     //   console.log("balanceAccount2_after: " + balanceAccount2_after);
     //   console.log("balanceAccount3_after: " + balanceAccount3_after);
-    //   console.log("balanceAccountCharity_after: " + balanceAccountCharity_after);
-    //   console.log("balanceAccountLiquidity_after: " + balanceAccountLiquidity_after);
+    //   console.log("balanceAccountProject_after: " + balanceAccountProject_after);
     //   console.log("balanceAccountAntiDip_after: " + balanceAccountAntiDip_after);
     //
     //   // balanceAccount0_after.should.be.a.bignumber.equals(new BN('70000000000000000000000'));
     //   // balanceAccount1_after.should.be.a.bignumber.equals(new BN('0'));
     //   // balanceAccount2_after.should.be.a.bignumber.equals(new BN('18900000000000000000000'));
     //   // balanceAccount3_after.should.be.a.bignumber.equals(new BN('8900000000000000000000'));
-    //   // balanceAccountCharity_after.should.be.a.bignumber.equals(new BN('0'));
-    //   // balanceAccountLiquidity_after.should.be.a.bignumber.equals(new BN('0'));
+    //   // balanceAccountProject_after.should.be.a.bignumber.equals(new BN('0'));
     //   // balanceAccountAntiDip_after.should.be.a.bignumber.equals(new BN('2200000000000000000000'));
     // });
   // });
@@ -290,22 +272,19 @@ contract('TokenNew', properties => {
   describe('token Presale and PancakeSwap functions', function () {
 
     it('set presale parameters correctly', async function() {
-      await myToken.setPresaleParameters(1000, accounts[5], accounts[6], accounts[7], false);
+      await myToken.setPresaleParameters(1000, accounts[6], accounts[7], false);
       const maxTXAmountPerTransfer = await myToken.maxTXAmountPerTransfer();
-      const charityAddress = await myToken.getCharityAddress();
-      const liquidityAddress = await myToken.getLiquidityAddress();
+      const projectAddress = await myToken.getProjectAddress();
       const antiDipAddress = await myToken.getAntiDipAddress();
       const antiDipAutoFromOracle = await myToken.getAntiDipAutoFromOracle();
 
       console.log("_MaxTXPerThousand: " + maxTXAmountPerTransfer);
-      console.log("_newCharityAddress: " + charityAddress);
-      console.log("_newLiquidityAddress: " + liquidityAddress);
+      console.log("_newProjectAddress: " + projectAddress);
       console.log("_newAntiDipAddress: " + antiDipAddress);
       console.log("_antiDipAutoFromOracle: " + antiDipAutoFromOracle);
 
       maxTXAmountPerTransfer.should.be.a.bignumber.equals(new BN('100000000000000000000000'));
-      charityAddress.should.equals(accounts[5]);
-      liquidityAddress.should.equals(accounts[6]);
+      projectAddress.should.equals(accounts[6]);
       antiDipAddress.should.equals(accounts[7]);
       antiDipAutoFromOracle.should.equals(false);
     });

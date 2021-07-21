@@ -215,16 +215,12 @@ contract TokenNew is Context, IERC20, Ownable {
     uint256 public _taxFee = 0; // 3% redistribuition
     uint256 private _previousTaxFee = _taxFee;
 
-    uint256 public _liquidityFee = 0; // 3% liquidity fee
-    uint256 private _previousLiquidityFee = _liquidityFee;
-
-    uint256 public _charityFee = 0; // 5% charity fee
-    uint256 private _previousCharityFee = _charityFee;
+    uint256 public _projectFee = 0; // 3% project fee
+    uint256 private _previousProjectFee = _projectFee;
 
     uint256 public _maxTxAmount = 100000000 * 10**6 * 10**9; // Max transferrable in one transaction (1% of _tTotal after initial burning of 50% of total tokens)
 
-    address public _charityAddress = 0x3136F1Ec8a29b1cF5b5d73f2A1b51658007d8BB3; // Charity address o Singer address
-    address public _liquidityAddress = 0x31e1149141534a4ae69283150eEF010826162E60; // Liquidity address
+    address public _projectAddress = 0x31e1149141534a4ae69283150eEF010826162E60; // Project address
     address public _antiDipAddress = 0x9731ED56e6d13B5220F4DE929f41490b4939AD63; // Anti Dip address
 
     constructor ()  {
@@ -232,15 +228,13 @@ contract TokenNew is Context, IERC20, Ownable {
         //exclude owner and this contract from fee
         _isExcludedFromFee[owner()] = true;
         _isExcludedFromFee[address(this)] = true;
-        _isExcludedFromFee[_charityAddress] = true;
-        _isExcludedFromFee[_liquidityAddress] = true;
+        _isExcludedFromFee[_projectAddress] = true;
         _isExcludedFromFee[_antiDipAddress] = true;
 
         //exclude owner and this contract from Anti Dip fee
         _isExcludedFromAntiDipFee[owner()] = true;
         _isExcludedFromAntiDipFee[address(this)] = true;
-        _isExcludedFromAntiDipFee[_charityAddress] = true;
-        _isExcludedFromAntiDipFee[_liquidityAddress] = true;
+        _isExcludedFromAntiDipFee[_projectAddress] = true;
         _isExcludedFromAntiDipFee[_antiDipAddress] = true;
 
         emit Transfer(address(0), _msgSender(), _tTotal);
@@ -301,20 +295,12 @@ contract TokenNew is Context, IERC20, Ownable {
         return _taxFee;
     }
 
-    function getLiquidityFee() public view returns (uint256) {
-        return _liquidityFee;
+    function getProjectFee() public view returns (uint256) {
+        return _projectFee;
     }
 
-    function getLiquidityAddress() public view returns (address) {
-        return _liquidityAddress;
-    }
-
-    function getCharityFee() public view returns (uint256) {
-        return _charityFee;
-    }
-
-    function getCharityAddress() public view returns (address) {
-        return _charityAddress;
+    function getProjectAddress() public view returns (address) {
+        return _projectAddress;
     }
 
     function totalSupply() public view override returns (uint256) {
@@ -345,8 +331,7 @@ contract TokenNew is Context, IERC20, Ownable {
 
     function setPresaleParameters (
       uint256 _MaxTXPerThousand,
-      address payable _newCharityAddress,
-      address payable _newLiquidityAddress,
+      address payable _newProjectAddress,
       address payable _newAntiDipAddress,
       bool _antiDipAutoFromOracle
 
@@ -355,8 +340,7 @@ contract TokenNew is Context, IERC20, Ownable {
         removeAllAntiDipFee();
         setAntiDipAutoFromOracle(_antiDipAutoFromOracle); // settare a false
         setMaxTxPerThousand(_MaxTXPerThousand);
-        changeCharityAddress(_newCharityAddress);
-        changeLiquidityAddress(_newLiquidityAddress);
+        changeProjectAddress(_newProjectAddress);
         changeAntiDipAddress(_newAntiDipAddress);
     }
 
@@ -450,10 +434,9 @@ contract TokenNew is Context, IERC20, Ownable {
         _isExcludedFromAntiDipFee[account] = false;
     }
 
-    function setFeePercent(uint256 taxFee, uint256 liquidityFee, uint256 charityFee) external onlyOwner() {
+    function setFeePercent(uint256 taxFee, uint256 projectFee) external onlyOwner() {
         _taxFee = taxFee;
-        _liquidityFee = liquidityFee;
-        _charityFee = charityFee;
+        _projectFee = projectFee;
     }
 
     function setAntiDipFeePercent(uint256 antiDipFee) external onlyOwner {
@@ -470,12 +453,8 @@ contract TokenNew is Context, IERC20, Ownable {
         );
     }
 
-    function changeCharityAddress(address payable _newaddress) public onlyOwner {
-    _charityAddress = _newaddress;
-    }
-
-    function changeLiquidityAddress(address payable _newaddress) public onlyOwner {
-    _liquidityAddress = _newaddress;
+    function changeProjectAddress(address payable _newaddress) public onlyOwner {
+    _projectAddress = _newaddress;
     }
 
     function changeAntiDipAddress(address payable _newaddress) public onlyOwner {
@@ -493,25 +472,25 @@ contract TokenNew is Context, IERC20, Ownable {
 
 
     function _getValues(uint256 tAmount) private view returns (uint256, uint256, uint256, uint256, uint256, uint256, uint256) {
-        (uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tCharity) = _getTValues(tAmount);
-        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = _getRValues(tAmount, tFee, tLiquidity, tCharity, _getRate());
-        return (rAmount, rTransferAmount, rFee, tTransferAmount, tFee, tLiquidity, tCharity);
+        (uint256 tTransferAmount, uint256 tFee, uint256 tProject, uint256 tAntiDip) = _getTValues(tAmount);
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee) = _getRValues(tAmount, tFee, tProject, tAntiDip, _getRate());
+        return (rAmount, rTransferAmount, rFee, tTransferAmount, tFee, tProject, tAntiDip);
     }
 
     function _getTValues(uint256 tAmount) private view returns (uint256, uint256, uint256, uint256) {
         uint256 tFee = calculateTaxFee(tAmount);
-        uint256 tLiquidity = calculateLiquidityFee(tAmount);
-        uint256 tCharity = calculateCharityFee(tAmount);
-        uint256 tTransferAmount = tAmount.sub(tFee).sub(tLiquidity).sub(tCharity);
-        return (tTransferAmount, tFee, tLiquidity, tCharity);
+        uint256 tProject = calculateProjectFee(tAmount);
+        uint256 tAntiDip = calculateAntiDipFee(tAmount);
+        uint256 tTransferAmount = tAmount.sub(tFee).sub(tProject).sub(tAntiDip);
+        return (tTransferAmount, tFee, tProject, tAntiDip);
     }
 
-    function _getRValues(uint256 tAmount, uint256 tFee, uint256 tLiquidity, uint256 tCharity, uint256 currentRate) private pure returns (uint256, uint256, uint256) {
+    function _getRValues(uint256 tAmount, uint256 tFee, uint256 tProject, uint256 tAntiDip, uint256 currentRate) private pure returns (uint256, uint256, uint256) {
         uint256 rAmount = tAmount.mul(currentRate);
         uint256 rFee = tFee.mul(currentRate);
-        uint256 rLiquidity = tLiquidity.mul(currentRate);
-        uint256 rCharity = tCharity.mul(currentRate);
-        uint256 rTransferAmount = rAmount.sub(rFee).sub(rLiquidity).sub(rCharity);
+        uint256 rProject = tProject.mul(currentRate);
+        uint256 rAntiDip = tAntiDip.mul(currentRate);
+        uint256 rTransferAmount = rAmount.sub(rFee).sub(rProject).sub(rAntiDip);
         return (rAmount, rTransferAmount, rFee);
     }
 
@@ -534,22 +513,12 @@ contract TokenNew is Context, IERC20, Ownable {
         return (rSupply, tSupply);
     }
 
-//
-
-    function _takeLiquidity(uint256 tLiquidity) private {
+    function _takeProject(uint256 tProject) private {
         uint256 currentRate =  _getRate();
-        uint256 rLiquidity = tLiquidity.mul(currentRate);
-        _rOwned[_liquidityAddress] = _rOwned[_liquidityAddress].add(rLiquidity);
-        if(_isExcluded[_liquidityAddress])
-            _tOwned[_liquidityAddress] = _tOwned[_liquidityAddress].add(tLiquidity);
-    }
-
-    function _takeCharity(uint256 tCharity) private {
-        uint256 currentRate =  _getRate();
-        uint256 rCharity = tCharity.mul(currentRate);
-        _rOwned[_charityAddress] = _rOwned[_charityAddress].add(rCharity);
-        if(_isExcluded[_charityAddress])
-            _tOwned[_charityAddress] = _tOwned[_charityAddress].add(tCharity);
+        uint256 rProject = tProject.mul(currentRate);
+        _rOwned[_projectAddress] = _rOwned[_projectAddress].add(rProject);
+        if(_isExcluded[_projectAddress])
+            _tOwned[_projectAddress] = _tOwned[_projectAddress].add(tProject);
     }
 
     function _takeAntiDip(uint256 tAntiDip) private {
@@ -566,16 +535,16 @@ contract TokenNew is Context, IERC20, Ownable {
         return _amount.mul(_taxFee).div(10**2);
     }
 
-    function calculateLiquidityFee(uint256 _amount) private view returns (uint256) {
-        return _amount.mul(_liquidityFee).div(10**2);
+    function calculateProjectFee(uint256 _amount) private view returns (uint256) {
+        return _amount.mul(_projectFee).div(10**2);
     }
 
-    function calculateCharityFee(uint256 _amount) private view returns (uint256) {
-        return _amount.mul(_charityFee).div(10**2);
+    function calculateAntiDipFee(uint256 _amount) private view returns (uint256) {
+        return _amount.mul(_antiDipFee).div(10**2);
     }
 
 //////////////  questa funzione deve avere il feedback dall'oracolo di Uniswap per definire la fee in funzione dell'allontanamento dal prezzo massimo ////////////////////////
-   function calculateAntiDipFee(uint256 _amount) public onlyOwner view returns (uint256) {
+   /* function calculateAntiDipFee(uint256 _amount) public onlyOwner view returns (uint256) {
        uint256 antiDipResultFee;
        if (!_autoMode) {
            antiDipResultFee = _amount.mul(_antiDipFee).div(10**2);
@@ -584,18 +553,16 @@ contract TokenNew is Context, IERC20, Ownable {
            antiDipResultFee = _amount.mul(_antiDipFeeFromOracle).div(10**2);
        }
        return antiDipResultFee;
-   }
+   } */
 
     function removeAllFee() private {
-        if(_taxFee == 0 && _liquidityFee == 0 && _charityFee == 0) return;
+        if(_taxFee == 0 && _projectFee == 0) return;
 
         _previousTaxFee = _taxFee;
-        _previousLiquidityFee = _liquidityFee;
-        _previousCharityFee = _charityFee;
+        _previousProjectFee = _projectFee;
 
         _taxFee = 0;
-        _liquidityFee = 0;
-        _charityFee = 0;
+        _projectFee = 0;
     }
 
     function removeAllAntiDipFee() private {
@@ -606,8 +573,7 @@ contract TokenNew is Context, IERC20, Ownable {
 
     function restoreAllFee() private {
         _taxFee = _previousTaxFee;
-        _liquidityFee = _previousLiquidityFee;
-        _charityFee = _previousCharityFee;
+        _projectFee = _previousProjectFee;
     }
 
     function restoreAllAntiDipFee() private {
@@ -649,7 +615,7 @@ contract TokenNew is Context, IERC20, Ownable {
         if(_isExcludedFromFee[from] || _isExcludedFromFee[to]){
             takeFee = false;
         }
-        //transfer amount, it will take redistribuition fee, charity fee, liquidity fee
+        //transfer amount, it will take redistribuition fee, antidip fee, project fee
         _tokenTransfer(from,to,amount,takeFee);
     }
 
@@ -675,45 +641,45 @@ contract TokenNew is Context, IERC20, Ownable {
     }
 
     function _transferStandard(address sender, address recipient, uint256 tAmount) private {
-        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tCharity) = _getValues(tAmount);
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, uint256 tTransferAmount, uint256 tFee, uint256 tProject, uint256 tAntiDip) = _getValues(tAmount);
         _rOwned[sender] = _rOwned[sender].sub(rAmount);
         _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);
-        _takeLiquidity(tLiquidity);
-        _takeCharity(tCharity);
+        _takeProject(tProject);
+        _takeAntiDip(tAntiDip);
         _reflectFee(rFee, tFee);
         emit Transfer(sender, recipient, tTransferAmount);
     }
 
     function _transferToExcluded(address sender, address recipient, uint256 tAmount) private {
-        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tCharity) = _getValues(tAmount);
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, uint256 tTransferAmount, uint256 tFee, uint256 tProject, uint256 tAntiDip) = _getValues(tAmount);
         _rOwned[sender] = _rOwned[sender].sub(rAmount);
         _tOwned[recipient] = _tOwned[recipient].add(tTransferAmount);
         _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);
-        _takeLiquidity(tLiquidity);
-        _takeCharity(tCharity);
+        _takeProject(tProject);
+        _takeAntiDip(tAntiDip);
         _reflectFee(rFee, tFee);
         emit Transfer(sender, recipient, tTransferAmount);
     }
 
     function _transferFromExcluded(address sender, address recipient, uint256 tAmount) private {
-        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tCharity) = _getValues(tAmount);
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, uint256 tTransferAmount, uint256 tFee, uint256 tProject, uint256 tAntiDip) = _getValues(tAmount);
         _tOwned[sender] = _tOwned[sender].sub(tAmount);
         _rOwned[sender] = _rOwned[sender].sub(rAmount);
         _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);
-        _takeLiquidity(tLiquidity);
-        _takeCharity(tCharity);
+        _takeProject(tProject);
+        _takeAntiDip(tAntiDip);
         _reflectFee(rFee, tFee);
         emit Transfer(sender, recipient, tTransferAmount);
     }
 
     function _transferBothExcluded(address sender, address recipient, uint256 tAmount) private {
-        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity, uint256 tCharity) = _getValues(tAmount);
+        (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, uint256 tTransferAmount, uint256 tFee, uint256 tProject, uint256 tAntiDip) = _getValues(tAmount);
         _tOwned[sender] = _tOwned[sender].sub(tAmount);
         _rOwned[sender] = _rOwned[sender].sub(rAmount);
         _tOwned[recipient] = _tOwned[recipient].add(tTransferAmount);
         _rOwned[recipient] = _rOwned[recipient].add(rTransferAmount);
-        _takeLiquidity(tLiquidity);
-        _takeCharity(tCharity);
+        _takeProject(tProject);
+        _takeAntiDip(tAntiDip);
         _reflectFee(rFee, tFee);
         emit Transfer(sender, recipient, tTransferAmount);
     }
