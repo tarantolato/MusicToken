@@ -5,44 +5,24 @@ Pubblicazione su mainnet_bsc
 
 //////////////////////////////////////////////////////////////////////////
 
-Pubblicazione su testnet_bsc (funzioni transfer e transferfrom separate ma clonate con le funzioni di calcolo delle fee con % diverse)
+Pubblicazione su testnet_bsc
 
 2_deploy_TokenNew.js
 ====================
 
    Replacing 'TokenNew'
    --------------------
-   > transaction hash:    0x77421cc34099af7c6898e34c30d822e55bfe7d18d0a577f5f8faba832c8bbab5
+   > transaction hash:    0xe9e6e8f0d75fb2641d1dc63d6c98903ce2c86141f71ac80440e2db2fd6107fa7
    > Blocks: 4            Seconds: 13
-   > contract address:    0x90834b5513962A117c037eAdD400e93d66b33041
-   > block number:        10767274
-   > block timestamp:     1626817018
+   > contract address:    0x364d977b27382dedd7452288Dc79B1519F2097B6
+   > block number:        10793819
+   > block timestamp:     1626896673
    > account:             0x0Db4E9C7dFB15bEE706d6212bABB25b0bFf15980
-   > balance:             0.29889204999999817
-   > gas used:            3294591 (0x32457f)
+   > balance:             1.10471276999999807
+   > gas used:            3110837 (0x2f77b5)
    > gas price:           20 gwei
    > value sent:          0 ETH
-   > total cost:          0.06589182 ETH
+   > total cost:          0.06221674 ETH
 
-//////////////////////////////////////////////////////////////////////////
-
-Pubblicazione su testnet_bsc (funzioni transfer e transferfrom separate ma clonate)
-
-2_deploy_TokenNew.js
-====================
-
-   Replacing 'TokenNew'
-   --------------------
-   > transaction hash:    0x9e62d691eb298d3de3cccc12f59d57e17b2da87ea3c057dac33513ecea0ef6cf
-   > Blocks: 3            Seconds: 9
-   > contract address:    0xc65096930f1a58bA2B417630F7Ba1C9EC93773C0
-   > block number:        10766744
-   > block timestamp:     1626815428
-   > account:             0x0Db4E9C7dFB15bEE706d6212bABB25b0bFf15980
-   > balance:             0.94009967999999817
-   > gas used:            3244787 (0x3182f3)
-   > gas price:           20 gwei
-   > value sent:          0 ETH
-   > total cost:          0.06489574 ETH
 
 //////////////////////////////////////////////////////////////////////////
