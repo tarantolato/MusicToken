@@ -12,17 +12,17 @@ Pubblicazione su testnet_bsc
 
    Replacing 'TokenNew'
    --------------------
-   > transaction hash:    0x6458ea1224e88ac5656c68b110cfe9805690bf380f68834a93cd66737ae7e4b7
-   > Blocks: 3            Seconds: 10
-   > contract address:    0x0293010e2D8d83FfA669A950b8748075d8f252B8
-   > block number:        10797114
-   > block timestamp:     1626906558
+   > transaction hash:    0x2afd9b53c4fb47b834fe8823287caf9b2f72322ee18efffccf7f38292f4516c7
+   > Blocks: 4            Seconds: 13
+   > contract address:    0xD2b9b921e80088B7530bDBC8483A59c837E3FFb8
+   > block number:        10798886
+   > block timestamp:     1626911874
    > account:             0x0Db4E9C7dFB15bEE706d6212bABB25b0bFf15980
-   > balance:             0.699858119999997899
-   > gas used:            2894549 (0x2c2ad5)
+   > balance:             1.419804339999997754
+   > gas used:            3075030 (0x2eebd6)
    > gas price:           20 gwei
    > value sent:          0 ETH
-   > total cost:          0.05789098 ETH
+   > total cost:          0.0615006 ETH
 
 
 //////////////////////////////////////////////////////////////////////////

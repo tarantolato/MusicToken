@@ -17,7 +17,7 @@ contract('TokenNew', properties => {
   const _antiDipAutoFromOracle = "0"; // % taxation in BNB to avoid dips
   const _taxFee = "0"; // % redistribuition to Token holders
   const _projectFee = "0"; // % fee to the project pool
-  const _maxTxAmount = new BN('10000000000000000000000'); // Max transferrable in one transaction (0,2% of _tTotal)
+  const _maxTxAmount = new BN('100000000000000000000000'); // Max transferrable in one transaction (0,2% of _tTotal)
 
   let accounts;
   let owner;
@@ -237,14 +237,14 @@ contract('TokenNew', properties => {
     });
 
     it('set PancakeSwap parameters correctly', async function() {
-      await myToken.setPancakeSwapParameters(3, true);
+      await myToken.setPancakeSwapParameters(1000, true);
       const maxTXAmountPerTransfer = await myToken.maxTXAmountPerTransfer();
       const antiDipAutoFromOracle = await myToken.getAntiDipAutoFromOracle();
 
       console.log("_MaxTXPerThousand: " + maxTXAmountPerTransfer);
       console.log("_antiDipAutoFromOracle: " + antiDipAutoFromOracle);
 
-      maxTXAmountPerTransfer.should.be.a.bignumber.equals(new BN('300000000000000000000'));
+      maxTXAmountPerTransfer.should.be.a.bignumber.equals(new BN('100000000000000000000000'));
       antiDipAutoFromOracle.should.equals(true);
     });
   });
