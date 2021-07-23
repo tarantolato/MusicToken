@@ -10,7 +10,7 @@ chai.use(require('chai-bn')(BN));
 
 contract('TokenNew', properties => {
   const _decimals = "9"; // i decimali della coin
-  const _initialSupply = new BN('100000000000000000000000'); // 100.000.000.000.000.000 cento milioni di miliardi di tokens con 9 cifre decimali
+  const _initialSupply = new BN('100000000000000000000000'); // 100.000.000.000.000 cento milioni di milioni di tokens con 9 cifre decimali
   const _BigAmountTransfer = new BN('10000000000000000000000'); // 10.000.000.000.000.000 dieci milioni di miliardi di tokens con 9 cifre decimali
   const _name = "TokenNew";
   const _symbol = "TKNN";

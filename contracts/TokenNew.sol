@@ -216,7 +216,7 @@ contract TokenNew is Context, IERC20, Ownable {
     uint256 public _projectFee = 0; // 3% project fee
     uint256 private _previousProjectFee = _projectFee;
 
-    uint256 public _maxTxAmount = 100000000 * 10**6 * 10**9; // Max transferrable in one transaction (1% of _tTotal after initial burning of 50% of total tokens)
+    uint256 public _maxTxAmount = 100000000 * 10**6 * 10**9; // Max transferrable in one transaction (0,2% of _tTotal)
 
     address public _projectAddress = 0x31e1149141534a4ae69283150eEF010826162E60; // Project address
     address public _antiDipAddress = 0x9731ED56e6d13B5220F4DE929f41490b4939AD63; // Anti Dip address
