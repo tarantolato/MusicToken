@@ -43,7 +43,7 @@ module.exports = {
       confirmations: 10,
       timeoutBlocks: 600,
       skipDryRun: true,
-      gasLimit:300000
+      gasLimit:500000
     },
     testnet_kovan: {
       provider: () => providerTestnetKovan,
