@@ -1,4 +1,4 @@
-const MyToken = artifacts.require('TokenNew'); // dove "TokenNew" tra parentesi è il nome del contratto nel file solicity
+const MyToken = artifacts.require('MusicToken'); // dove "MusicToken" tra parentesi è il nome del contratto nel file solicity
 
 var chai = require('chai')
   , expect = chai.expect
@@ -8,12 +8,12 @@ const BN = require('bn.js');
 // Enable and inject BN dependency
 chai.use(require('chai-bn')(BN));
 
-contract('TokenNew', properties => {
+contract('MusicToken', properties => {
   const _decimals = "9"; // i decimali della coin
   const _initialSupply = new BN('100000000000000000000000'); // 100.000.000.000.000 cento milioni di milioni di tokens con 9 cifre decimali
   const _BigAmountTransfer = new BN('10000000000000000000000'); // 10.000.000.000.000.000 dieci milioni di miliardi di tokens con 9 cifre decimali
-  const _name = "TokenNew";
-  const _symbol = "TKNN";
+  const _name = "Music Token";
+  const _symbol = "MUSICTKN";
   const _antiDipAutoFromOracle = "0"; // % taxation in BNB to avoid dips
   const _taxFee = "0"; // % redistribuition to Token holders
   const _projectFee = "0"; // % fee to the project pool

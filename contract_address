@@ -1,5 +1,26 @@
 Pubblicazione su mainnet_bsc
 
+2_deploy_MusicToken.js
+======================
+
+   Replacing 'MusicToken'
+   ----------------------
+   > transaction hash:    0x1d8a13b6ae2434b67c5fd84c59ba1d77836b540fbf14c554641c4dec79049b51
+   > Blocks: 4            Seconds: 12
+   > contract address:    0x3940d8710AB712e6718Ad319BfCD103F95d96ca2
+   > block number:        9525082
+   > block timestamp:     1627401018
+   > account:             0x6F48A6aAe11F7aA787EBAbF72BF8Cf1Bd69F8e07
+   > balance:             1.934155
+   > gas used:            3075164 (0x2eec5c)
+   > gas price:           20 gwei
+   > value sent:          0 ETH
+   > total cost:          0.06150328 ETH
+
+//////////////////////////////////////////////////////////////////////////
+
+Pubblicazione su mainnet_bsc
+
 2_deploy_TokenNew.js
 ====================
 

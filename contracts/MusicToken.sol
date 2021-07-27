@@ -178,7 +178,7 @@ contract Ownable is Context {
     }
 }
 
-contract TokenNew is Context, IERC20, Ownable {
+contract MusicToken is Context, IERC20, Ownable {
     using SafeMath for uint256;
     using Address for address;
 
@@ -202,8 +202,8 @@ contract TokenNew is Context, IERC20, Ownable {
     uint256 private _startTimestamp;
     uint256 private _LockingPeriodDays = 30; // Locking time for locking liquidity in days
 
-    string private _name = "TokenNew";
-    string private _symbol = "TKNN";
+    string private _name = "Music Token";
+    string private _symbol = "MUSICTKN";
     uint8 private _decimals = 9;
 
     bool public _autoMode = false; // allo start disattiva il calcolo della Anti Dip fee tramite Oracolo
